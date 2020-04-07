@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-from BeautifulSoup4 import BeautifulSoup
+from bs4 import BeautifulSoup
 import requests
 import re
 import pandas as pd
 from tabulate import tabulate
+import datetime as date
 
 def main():
 
@@ -49,11 +50,15 @@ def main():
 
     df = country_table(content,result)
 
-    writer = pd.ExcelWriter('covid19.xlsx', engine='xlsxwriter')
+
+
+    writer = pd.ExcelWriter('covid19_world.xlsx', engine='xlsxwriter')
 
     ddf = pd.DataFrame(df[0])
 
-    ddf.to_excel(writer, sheet_name='Sheet1')
+    sheetname = str(date.datetime.now())
+
+    ddf.to_excel(writer, sheet_name=sheetname[0:10])
 
 
     writer.save()

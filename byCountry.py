@@ -6,6 +6,9 @@ import pandas as pd
 from tabulate import tabulate
 import time
 from selenium import webdriver
+import pandas as pd
+import datetime as date
+from tabulate import tabulate
 
 def main():
     argv = sys.argv[1]
@@ -43,9 +46,68 @@ def main():
         if dt:
             new_dt = dt[7:-1]
             new_data.append(new_dt)
-    print(new_labels)
-    print(new_data)
+   # print(new_labels)
+    #print(new_data)
 
+    #A dict of data {label: data}
+    data_list =[]
+    for d in new_data:
+        parsed = d.split(',')
+        numbers = []
+        for number in parsed:
+            if(number == 'null'):
+                numbers.append(0)
+            elif(number == '"nan"'):
+                numbers.append(0)
+            else:
+                numbers.append(float(number))
+        data_list.append(numbers)
+
+
+
+    data={}
+    
+    for l,d in zip(new_labels, data_list):
+        data.update({l:d})
+
+    print(data)
+
+
+    data_specified = {}
+
+   
+
+    data_specified.update({"Cases": data['Cases']})
+
+    data_specified.update({"Daily Cases": data['Daily Cases']})
+
+    data_specified.update({"Currently Infected": data['Currently Infected']})
+
+    data_specified.update({"Deaths": data['Deaths']})
+
+    data_specified.update({"Daily Deaths": data['Daily Deaths']})
+
+
+    df = pd.DataFrame(data_specified)
+
+    print(df)
+
+    write_file(df,argv)
+
+def write_file(df,country):
+
+    filename = "covid-19-" + str(date.datetime.now())[0:10] + "-"+country +".xlsx"
+    
+    writer = pd.ExcelWriter(filename, engine='xlsxwriter')
+
+    #ddf = pd.DataFrame(df[0])
+
+    sheetname = str(date.datetime.now())
+
+    df.to_excel(writer, sheet_name=sheetname[0:10])
+
+
+    writer.save()
 
 
 
